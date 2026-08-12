@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { TypeBadge } from '@/components/TypeBadge';
 import { StatBar } from '@/components/StatBar';
+import { PokemonImage } from '@/components/PokemonImage';
 import { fetchPokemon } from '@/lib/pokemon';
 import type { Pokemon } from '@/lib/types';
 
@@ -35,10 +36,6 @@ export default async function PokemonDetailPage({ params }: PageProps) {
   }
 
   const capitalizedName = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
-  // Use ID-based sprite URL as primary (more reliable than PokeAPI redirect)
-  const primaryImage = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`;
-  const fallbackImage = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`;
-  const image = primaryImage;
   const types = pokemon.types.map(t => t.type.name);
   const abilities = pokemon.abilities.map(a => ({
     name: a.ability.name,
@@ -75,15 +72,7 @@ export default async function PokemonDetailPage({ params }: PageProps) {
             <div className="grid lg:grid-cols-2 gap-8">
               <div className="bg-[#1E293B] border-4 border-black p-6">
                 <div className="aspect-square bg-[#1A2B3C] border-2 border-black flex items-center justify-center overflow-hidden mb-6">
-                  <img
-                    src={image}
-                    alt={pokemon.name}
-                    className="w-full h-full object-contain max-h-96"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = fallbackImage;
-                    }}
-                  />
+                  <PokemonImage pokemonId={pokemon.id} pokemonName={pokemon.name} className="w-full h-full object-contain max-h-96" />
                 </div>
                 
                 <div className="space-y-4">
