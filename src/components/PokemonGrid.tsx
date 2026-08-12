@@ -112,9 +112,9 @@ export function PokemonGrid() {
           <button
             onClick={loadMore}
             disabled={loadingMore}
-            className="px-6 py-3 bg-gray-900 border border-gray-800 rounded-xl hover:bg-gray-800 transition-colors disabled:opacity-50"
+            className="px-6 py-3 bg-[#1A2B3C] border-4 border-black text-white font-mono hover:bg-[#233D4D] transition-colors disabled:opacity-50 pokedex-button"
           >
-            {loadingMore ? 'Loading...' : 'Load More'}
+            {loadingMore ? 'LOADING...' : 'LOAD MORE'}
           </button>
         </div>
       )}

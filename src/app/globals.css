@@ -1,8 +1,17 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap');
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0a0a;
+  --foreground: #E2E8F0;
+  --pokedex-red: #DC0A2D;
+  --pokedex-dark-red: #8B0000;
+  --screen-blue: #233D4D;
+  --screen-dark-blue: #1A2B3C;
+  --led-blue: #3B82F6;
+  --led-red: #6B2118;
+  --led-green: #1B4332;
+  --card-bg: #1E293B;
 }
 
 @theme inline {
@@ -12,15 +21,82 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background: #0a0a0a;
+  color: var(--foreground);
+  font-family: 'Share Tech Mono', monospace;
+  min-height: 100vh;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.pokedex-font {
+  font-family: 'Press Start 2P', cursive;
+}
+
+.crt-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.crt-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+.crt-effect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 60%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  pointer-events: none;
+  z-index: 11;
+}
+
+.led-glow {
+  box-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+}
+
+.pokedex-frame {
+  background: linear-gradient(145deg, var(--pokedex-red), var(--pokedex-dark-red));
+  border: 4px solid #000;
+  box-shadow: 
+    inset 0 0 20px rgba(0, 0, 0, 0.5),
+    0 20px 40px rgba(0, 0, 0, 0.8);
+}
+
+.screen-area {
+  background: var(--screen-blue);
+  border: 8px solid #000;
+  box-shadow: 
+    inset 0 0 30px rgba(0, 0, 0, 0.8),
+    inset 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+.pixel-border {
+  border-image: repeating-linear-gradient(
+    45deg,
+    #000,
+    #000 2px,
+    transparent 2px,
+    transparent 4px
+  ) 4;
 }

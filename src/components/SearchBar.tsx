@@ -27,13 +27,13 @@ export function SearchBar() {
   
   return (
     <div className="relative max-w-md mx-auto">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
       <input
         type="text"
-        placeholder="Search Pokémon..."
+        placeholder="SEARCH POKéMON"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="w-full pl-10 pr-4 py-3 bg-gray-900 border border-gray-800 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-gray-700 focus:ring-2 focus:ring-gray-700 transition-all"
+        className="w-full pl-10 pr-4 py-3 bg-[#1A2B3C] border-4 border-black text-white placeholder-gray-500 focus:outline-none font-mono text-sm uppercase tracking-wide"
       />
     </div>
   );

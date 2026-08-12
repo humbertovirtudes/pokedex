@@ -21,7 +21,7 @@ export function TypeBadge({ type, size = 'md' }: TypeBadgeProps) {
   
   return (
     <span
-      className={`inline-flex items-center rounded-full border font-medium ${bgClass} ${textClass} ${borderClass} ${sizeClasses[size]} bg-opacity-10`}
+      className={`inline-flex items-center border-2 border-black font-mono ${bgClass} ${textClass} ${borderClass} ${sizeClasses[size]} uppercase`}
       style={{
         backgroundColor: `${TYPE_COLORS_BG[type]?.replace('bg-[', '').replace(']', '') || '#666'}1A`,
       }}

@@ -6,11 +6,11 @@ interface StatBarProps {
 
 const statLabels: Record<string, string> = {
   hp: 'HP',
-  attack: 'Attack',
-  defense: 'Defense',
-  'special-attack': 'Sp. Atk',
-  'special-defense': 'Sp. Def',
-  speed: 'Speed',
+  attack: 'ATK',
+  defense: 'DEF',
+  'special-attack': 'SPA',
+  'special-defense': 'SPD',
+  speed: 'SPD',
 };
 
 export function StatBar({ name, value, max = 255 }: StatBarProps) {
@@ -27,10 +27,10 @@ export function StatBar({ name, value, max = 255 }: StatBarProps) {
   return (
     <div className="space-y-1">
       <div className="flex justify-between text-sm">
-        <span className="text-gray-300 capitalize">{label}</span>
-        <span className="text-gray-400 font-mono">{value}</span>
+        <span className="text-gray-300 font-mono text-xs uppercase">{label}</span>
+        <span className="text-gray-400 font-mono text-xs">{value}</span>
       </div>
-      <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+      <div className="h-3 bg-[#1A2B3C] border-2 border-black overflow-hidden">
         <div
           className={`h-full transition-all duration-500 ${barColor}`}
           style={{ width: `${percentage}%` }}
