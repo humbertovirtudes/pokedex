@@ -1,13 +1,17 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { TypeBadge } from '@/components/TypeBadge';
 import { StatBar } from '@/components/StatBar';
-import { fetchPokemon } from '@/lib/pokemon';
+import { fetchPokemon, fetchAllPokemonNames } from '@/lib/pokemon';
 import type { Pokemon } from '@/lib/types';
 
 interface PageProps {
   params: Promise<{ name: string }>;
+}
+
+export async function generateStaticParams() {
+  const names = await fetchAllPokemonNames();
+  return names.map(name => ({ name }));
 }
 
 export async function generateMetadata({ params }: PageProps) {
@@ -26,12 +30,19 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function PokemonDetailPage({ params }: PageProps) {
   const { name } = await params;
-  
+
   let pokemon: Pokemon;
   try {
     pokemon = await fetchPokemon(name.toLowerCase());
   } catch {
-    notFound();
+    return (
+      <main className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-4">Pokémon not found</h1>
+          <Link href="/" className="text-gray-400 hover:text-white">← Back to PokéDEX</Link>
+        </div>
+      </main>
+    );
   }
 
   const capitalizedName = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
