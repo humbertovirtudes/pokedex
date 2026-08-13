@@ -4,10 +4,15 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { PokemonCard } from './PokemonCard';
 import { LoadingSkeleton } from './LoadingSkeleton';
+import { CaughtToggle } from './CaughtToggle';
 import { fetchPokemonList, fetchPokemonDetails, fetchAllPokemonNames } from '@/lib/pokemon';
 import type { Pokemon } from '@/lib/types';
 
-export function PokemonGrid() {
+interface PokemonGridProps {
+  caughtIds: number[];
+}
+
+export function PokemonGrid({ caughtIds }: PokemonGridProps) {
   const searchParams = useSearchParams();
   const [allPokemons, setAllPokemons] = useState<Pokemon[]>([]);
   const [allNames, setAllNames] = useState<string[]>([]);
@@ -143,15 +148,22 @@ export function PokemonGrid() {
         {filteredPokemons.map((pokemon, index) => {
           const types = pokemon.types.map(t => t.type.name);
           const isLast = index === filteredPokemons.length - 1;
+          const isCaught = caughtIds.includes(pokemon.id);
 
           return (
             <div key={pokemon.id} ref={isLast ? lastPokemonRef : undefined}>
-              <PokemonCard
-                name={pokemon.name}
-                id={pokemon.id}
-                image=""
-                types={types}
-              />
+              <div className="relative">
+                <CaughtToggle
+                  pokemonId={pokemon.id}
+                  initiallyCaught={isCaught}
+                />
+                <PokemonCard
+                  name={pokemon.name}
+                  id={pokemon.id}
+                  image=""
+                  types={types}
+                />
+              </div>
             </div>
           );
         })}

@@ -5,6 +5,9 @@ import { fetchPokemonDetails, fetchPokemonSpecies } from '@/lib/pokemon';
 import { PokemonImage } from '@/components/PokemonImage';
 import { TypeBadge } from '@/components/TypeBadge';
 import { StatBar } from '@/components/StatBar';
+import { CaughtToggle } from '@/components/CaughtToggle';
+import { getCaughtPokemonIds } from '@/lib/supabase/auth';
+import { hasConfig } from '@/lib/supabase/server';
 
 export default async function PokemonDetailPage({ params }: { params: Promise<{ name: string }> }) {
   const { name } = await params;
@@ -29,6 +32,9 @@ export default async function PokemonDetailPage({ params }: { params: Promise<{ 
 
   const types = pokemon.types.map(t => t.type.name);
 
+  const caughtIds = hasConfig ? await getCaughtPokemonIds() : [];
+  const isCaught = caughtIds.includes(pokemon.id);
+
   return (
     <div className="h-screen bg-black overflow-hidden flex items-center justify-center">
       <div className="pokedex-frame rounded-3xl p-6 w-full max-w-7xl h-full flex flex-col">
@@ -49,6 +55,8 @@ export default async function PokemonDetailPage({ params }: { params: Promise<{ 
               <p className="text-gray-400 font-mono">#{pokemon.id.toString().padStart(3, '0')}</p>
             </div>
           </div>
+
+          <CaughtToggle pokemonId={pokemon.id} initiallyCaught={isCaught} />
         </div>
 
         {/* LED Indicators */}
@@ -94,7 +102,7 @@ export default async function PokemonDetailPage({ params }: { params: Promise<{ 
                   <h2 className="text-xl pokedex-font text-white mb-4">BASE STATS</h2>
                   <div className="space-y-3">
                     {pokemon.stats.map((stat) => (
-                       <StatBar key={stat.stat.name} name={stat.stat.name} value={stat.base_stat} />
+                      <StatBar key={stat.stat.name} name={stat.stat.name} value={stat.base_stat} />
                     ))}
                   </div>
                 </div>

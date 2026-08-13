@@ -5,8 +5,13 @@ import { SearchBar } from '@/components/SearchBar';
 import { PokemonGrid } from '@/components/PokemonGrid';
 import { PokemonList } from '@/components/PokemonList';
 import { ViewToggle } from '@/components/ViewToggle';
+import { UserMenu } from '@/components/UserMenu';
 
-export default function PokedexClient() {
+interface PokedexClientProps {
+  caughtIds: number[];
+}
+
+export default function PokedexClient({ caughtIds }: PokedexClientProps) {
   const [view, setView] = useState<'grid' | 'list'>('grid');
 
   return (
@@ -28,16 +33,17 @@ export default function PokedexClient() {
             </h1>
           </div>
 
-          <div className="flex items-center gap-3">
-            <ViewToggle view={view} onViewChange={setView} />
-          </div>
+          <UserMenu />
         </div>
 
-        {/* LED Indicators */}
-        <div className="flex items-center gap-3 mb-4 flex-shrink-0">
-          <div className="w-4 h-4 rounded-full bg-blue-500 led-glow" />
-          <div className="w-4 h-4 rounded-full bg-red-500 led-glow" />
-          <div className="w-4 h-4 rounded-full bg-green-500 led-glow" />
+        {/* LED Indicators + View Toggle */}
+        <div className="flex items-center justify-between mb-4 flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-4 h-4 rounded-full bg-blue-500 led-glow" />
+            <div className="w-4 h-4 rounded-full bg-red-500 led-glow" />
+            <div className="w-4 h-4 rounded-full bg-green-500 led-glow" />
+          </div>
+          <ViewToggle view={view} onViewChange={setView} />
         </div>
 
         {/* Screen Area - This scrolls */}
@@ -51,7 +57,11 @@ export default function PokedexClient() {
 
               {/* Pokemon Content */}
               <div className="px-4 pb-4">
-                {view === 'grid' ? <PokemonGrid /> : <PokemonList />}
+                {view === 'grid' ? (
+                  <PokemonGrid caughtIds={caughtIds} />
+                ) : (
+                  <PokemonList caughtIds={caughtIds} />
+                )}
               </div>
             </div>
           </div>

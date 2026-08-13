@@ -1,8 +1,12 @@
 import { Suspense } from 'react';
 import PokedexClient from './PokedexClient';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
+import { getCaughtPokemonIds } from '@/lib/supabase/auth';
+import { hasConfig } from '@/lib/supabase/server';
 
-export default function Home() {
+export default async function Home() {
+  const caughtIds = hasConfig ? await getCaughtPokemonIds() : [];
+
   return (
     <Suspense fallback={
       <div className="h-screen bg-black overflow-hidden flex items-center justify-center">
@@ -18,10 +22,12 @@ export default function Home() {
               <h1 className="text-4xl pokedex-font text-white tracking-wider">POKéDEX</h1>
             </div>
           </div>
-          <div className="flex items-center gap-3 mb-4 flex-shrink-0">
-            <div className="w-4 h-4 rounded-full bg-blue-500" />
-            <div className="w-4 h-4 rounded-full bg-red-500" />
-            <div className="w-4 h-4 rounded-full bg-green-500" />
+          <div className="flex items-center justify-between mb-4 flex-shrink-0">
+            <div className="flex items-center gap-3">
+              <div className="w-4 h-4 rounded-full bg-blue-500" />
+              <div className="w-4 h-4 rounded-full bg-red-500" />
+              <div className="w-4 h-4 rounded-full bg-green-500" />
+            </div>
           </div>
           <div className="screen-area rounded-xl flex-1 overflow-hidden flex flex-col relative">
             <div className="crt-effect">
@@ -37,7 +43,7 @@ export default function Home() {
         </div>
       </div>
     }>
-      <PokedexClient />
+      <PokedexClient caughtIds={caughtIds} />
     </Suspense>
   );
 }

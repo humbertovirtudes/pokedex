@@ -3,10 +3,15 @@
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
+import { CaughtToggle } from './CaughtToggle';
 import { fetchPokemonList, fetchPokemonDetails, fetchAllPokemonNames } from '@/lib/pokemon';
 import type { Pokemon } from '@/lib/types';
 
-export function PokemonList() {
+interface PokemonListProps {
+  caughtIds: number[];
+}
+
+export function PokemonList({ caughtIds }: PokemonListProps) {
   const searchParams = useSearchParams();
   const [allPokemons, setAllPokemons] = useState<Pokemon[]>([]);
   const [allNames, setAllNames] = useState<string[]>([]);
@@ -149,6 +154,7 @@ export function PokemonList() {
         {filteredPokemons.map((pokemon, index) => {
           const image = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`;
           const isLast = index === filteredPokemons.length - 1;
+          const isCaught = caughtIds.includes(pokemon.id);
 
           return (
             <div key={pokemon.id} ref={isLast ? lastPokemonRef : undefined}>
@@ -167,6 +173,11 @@ export function PokemonList() {
                     <span className="text-sm text-gray-400 font-mono">#{pokemon.id.toString().padStart(3, '0')}</span>
                     <span className="text-lg font-mono text-white uppercase">{pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}</span>
                   </div>
+
+                  <CaughtToggle
+                    pokemonId={pokemon.id}
+                    initiallyCaught={isCaught}
+                  />
                 </div>
               </Link>
             </div>
