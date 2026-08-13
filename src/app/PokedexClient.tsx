@@ -10,8 +10,8 @@ export default function PokedexClient() {
   const [view, setView] = useState<'grid' | 'list'>('grid');
 
   return (
-    <div className="min-h-screen bg-black p-4 flex items-center justify-center">
-      <div className="pokedex-frame rounded-3xl p-6 w-full max-w-7xl h-[calc(100vh-2rem)] flex flex-col">
+    <div className="h-screen bg-black overflow-hidden flex items-center justify-center">
+      <div className="pokedex-frame rounded-3xl p-6 w-full max-w-7xl h-full flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between mb-4 flex-shrink-0">
           <div className="flex items-center gap-4">
@@ -41,15 +41,19 @@ export default function PokedexClient() {
         </div>
 
         {/* Screen Area - This scrolls */}
-        <div className="screen-area rounded-xl p-4 flex-1 overflow-hidden flex flex-col">
-          <div className="crt-effect flex-1 overflow-y-auto">
-            {/* Search Bar */}
-            <div className="mb-4 sticky top-0 bg-[#233D4D] pb-2 z-20">
-              <SearchBar />
-            </div>
+        <div className="screen-area rounded-xl flex-1 overflow-hidden flex flex-col relative">
+          <div className="crt-effect">
+            <div className="scroll-screen h-full">
+              {/* Search Bar */}
+              <div className="sticky top-0 bg-[#233D4D] pb-2 z-20 px-4 pt-4">
+                <SearchBar />
+              </div>
 
-            {/* Pokemon Content */}
-            {view === 'grid' ? <PokemonGrid /> : <PokemonList />}
+              {/* Pokemon Content */}
+              <div className="px-4 pb-4">
+                {view === 'grid' ? <PokemonGrid /> : <PokemonList />}
+              </div>
+            </div>
           </div>
         </div>
       </div>

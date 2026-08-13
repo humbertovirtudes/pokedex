@@ -5,8 +5,8 @@ import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 export default function Home() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-black p-4 flex items-center justify-center">
-        <div className="pokedex-frame rounded-3xl p-6 w-full max-w-7xl h-[calc(100vh-2rem)] flex flex-col">
+      <div className="h-screen bg-black overflow-hidden flex items-center justify-center">
+        <div className="pokedex-frame rounded-3xl p-6 w-full max-w-7xl h-full flex flex-col">
           <div className="flex items-center justify-between mb-4 flex-shrink-0">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 relative">
@@ -23,12 +23,14 @@ export default function Home() {
             <div className="w-4 h-4 rounded-full bg-red-500" />
             <div className="w-4 h-4 rounded-full bg-green-500" />
           </div>
-          <div className="screen-area rounded-xl p-4 flex-1 overflow-hidden flex flex-col">
-            <div className="crt-effect flex-1 overflow-y-auto">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {Array.from({ length: 20 }).map((_, i) => (
-                  <LoadingSkeleton key={i} />
-                ))}
+          <div className="screen-area rounded-xl flex-1 overflow-hidden flex flex-col relative">
+            <div className="crt-effect">
+              <div className="scroll-screen h-full px-4 pt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {Array.from({ length: 20 }).map((_, i) => (
+                    <LoadingSkeleton key={i} />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
