@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { PokemonCard } from './PokemonCard';
 import { LoadingSkeleton } from './LoadingSkeleton';
 import { fetchPokemonList, fetchPokemonDetails, fetchAllPokemonNames } from '@/lib/pokemon';
@@ -15,6 +15,11 @@ export function PokemonGrid() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [offset, setOffset] = useState(0);
+  const [mounted, setMounted] = useState(false);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => setMounted(true), []);
 
   const search = searchParams.get('search') || '';
   const limit = 20;
@@ -50,7 +55,7 @@ export function PokemonGrid() {
     loadPokemons(0);
   }, [search, loadPokemons]);
 
-  // Search: fetch names only when searching, filter, and fetch details
+  // Search: fetch names only when searching
   useEffect(() => {
     if (!search) return;
 
@@ -83,7 +88,7 @@ export function PokemonGrid() {
     return () => { isCancelled = true; };
   }, [search, allPokemons, allNames]);
 
-  const loadMore = async () => {
+  const doLoadMore = async () => {
     if (loadingMore || !hasMore) return;
 
     setLoadingMore(true);
@@ -91,6 +96,23 @@ export function PokemonGrid() {
     setOffset(newOffset);
     await loadPokemons(newOffset);
   };
+
+  // Infinite scroll via IntersectionObserver
+  const lastPokemonRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (!mounted || loading || loadingMore) return;
+      if (observerRef.current) observerRef.current.disconnect();
+
+      observerRef.current = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && hasMore && !search) {
+          doLoadMore();
+        }
+      }, { rootMargin: '200px' });
+
+      if (node) observerRef.current.observe(node);
+    },
+    [mounted, loading, loadingMore, hasMore, search, doLoadMore]
+  );
 
   // Client-side search filtering
   const filteredPokemons = search
@@ -117,30 +139,37 @@ export function PokemonGrid() {
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
-        {filteredPokemons.map((pokemon) => {
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-4">
+        {filteredPokemons.map((pokemon, index) => {
           const types = pokemon.types.map(t => t.type.name);
+          const isLast = index === filteredPokemons.length - 1;
 
           return (
-            <PokemonCard
-              key={pokemon.id}
-              name={pokemon.name}
-              id={pokemon.id}
-              image=""
-              types={types}
-            />
+            <div key={pokemon.id} ref={isLast ? lastPokemonRef : undefined}>
+              <PokemonCard
+                name={pokemon.name}
+                id={pokemon.id}
+                image=""
+                types={types}
+              />
+            </div>
           );
         })}
       </div>
 
-      {!search && hasMore && (
-        <div className="text-center">
+      {loadingMore && (
+        <div className="flex justify-center py-4">
+          <div className="animate-spin w-8 h-8 border-4 border-white border-t-transparent rounded-full" />
+        </div>
+      )}
+
+      {!search && hasMore && !loadingMore && (
+        <div className="text-center py-4">
           <button
-            onClick={loadMore}
-            disabled={loadingMore}
-            className="px-6 py-3 bg-[#1A2B3C] border-4 border-black text-white font-mono hover:bg-[#233D4D] transition-colors disabled:opacity-50"
+            onClick={doLoadMore}
+            className="px-6 py-3 bg-[#1A2B3C] border-4 border-black text-white font-mono hover:bg-[#233D4D] transition-colors"
           >
-            {loadingMore ? 'LOADING...' : 'LOAD MORE'}
+            LOAD MORE
           </button>
         </div>
       )}

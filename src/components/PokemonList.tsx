@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { fetchPokemonList, fetchPokemonDetails, fetchAllPokemonNames } from '@/lib/pokemon';
 import type { Pokemon } from '@/lib/types';
@@ -14,6 +14,10 @@ export function PokemonList() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [offset, setOffset] = useState(0);
+  const [mounted, setMounted] = useState(false);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  useEffect(() => setMounted(true), []);
 
   const search = searchParams.get('search') || '';
   const limit = 20;
@@ -49,7 +53,7 @@ export function PokemonList() {
     loadPokemons(0);
   }, [search, loadPokemons]);
 
-  // Search: fetch names only when searching, filter, and fetch details
+  // Search: fetch names only when searching
   useEffect(() => {
     if (!search) return;
 
@@ -82,7 +86,7 @@ export function PokemonList() {
     return () => { isCancelled = true; };
   }, [search, allPokemons, allNames]);
 
-  const loadMore = async () => {
+  const doLoadMore = async () => {
     if (loadingMore || !hasMore) return;
 
     setLoadingMore(true);
@@ -90,6 +94,23 @@ export function PokemonList() {
     setOffset(newOffset);
     await loadPokemons(newOffset);
   };
+
+  // Infinite scroll via IntersectionObserver
+  const lastPokemonRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (!mounted || loading || loadingMore) return;
+      if (observerRef.current) observerRef.current.disconnect();
+
+      observerRef.current = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && hasMore && !search) {
+          doLoadMore();
+        }
+      }, { rootMargin: '200px' });
+
+      if (node) observerRef.current.observe(node);
+    },
+    [mounted, loading, loadingMore, hasMore, search, doLoadMore]
+  );
 
   // Client-side search filtering
   const filteredPokemons = search
@@ -124,40 +145,48 @@ export function PokemonList() {
 
   return (
     <>
-      <div className="space-y-2 mb-8">
-        {filteredPokemons.map((pokemon) => {
+      <div className="space-y-2 mb-4">
+        {filteredPokemons.map((pokemon, index) => {
           const image = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`;
+          const isLast = index === filteredPokemons.length - 1;
 
           return (
-            <Link key={pokemon.id} href={`/pokemon/${pokemon.name}`}>
-              <div className="group flex items-center gap-4 bg-[#1E293B] border-4 border-black p-4 hover:bg-[#233D4D] transition-all duration-300">
-                <div className="w-12 h-12 bg-[#1A2B3C] border-2 border-black flex items-center justify-center flex-shrink-0">
-                  <img
-                    src={image}
-                    alt={pokemon.name}
-                    className="w-10 h-10 object-contain"
-                    loading="lazy"
-                  />
-                </div>
+            <div key={pokemon.id} ref={isLast ? lastPokemonRef : undefined}>
+              <Link href={`/pokemon/${pokemon.name}`}>
+                <div className="group flex items-center gap-4 bg-[#1E293B] border-4 border-black p-4 hover:bg-[#233D4D] transition-all duration-300">
+                  <div className="w-12 h-12 bg-[#1A2B3C] border-2 border-black flex items-center justify-center flex-shrink-0">
+                    <img
+                      src={image}
+                      alt={pokemon.name}
+                      className="w-10 h-10 object-contain"
+                      loading="lazy"
+                    />
+                  </div>
 
-                <div className="flex items-center gap-4 flex-1">
-                  <span className="text-sm text-gray-400 font-mono">#{pokemon.id.toString().padStart(3, '0')}</span>
-                  <span className="text-lg font-mono text-white uppercase">{pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}</span>
+                  <div className="flex items-center gap-4 flex-1">
+                    <span className="text-sm text-gray-400 font-mono">#{pokemon.id.toString().padStart(3, '0')}</span>
+                    <span className="text-lg font-mono text-white uppercase">{pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)}</span>
+                  </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </div>
           );
         })}
       </div>
 
-      {!search && hasMore && (
-        <div className="text-center">
+      {loadingMore && (
+        <div className="flex justify-center py-4">
+          <div className="animate-spin w-8 h-8 border-4 border-white border-t-transparent rounded-full" />
+        </div>
+      )}
+
+      {!search && hasMore && !loadingMore && (
+        <div className="text-center py-4">
           <button
-            onClick={loadMore}
-            disabled={loadingMore}
-            className="px-6 py-3 bg-[#1A2B3C] border-4 border-black text-white font-mono hover:bg-[#233D4D] transition-colors disabled:opacity-50"
+            onClick={doLoadMore}
+            className="px-6 py-3 bg-[#1A2B3C] border-4 border-black text-white font-mono hover:bg-[#233D4D] transition-colors"
           >
-            {loadingMore ? 'LOADING...' : 'LOAD MORE'}
+            LOAD MORE
           </button>
         </div>
       )}
