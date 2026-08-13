@@ -4,7 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import { TypeBadge } from '@/components/TypeBadge';
 import { StatBar } from '@/components/StatBar';
 import { PokemonImage } from '@/components/PokemonImage';
-import { fetchPokemon } from '@/lib/pokemon';
+import { fetchPokemon, fetchPokemonSpecies } from '@/lib/pokemon';
 import type { Pokemon } from '@/lib/types';
 
 interface PageProps {
@@ -46,6 +46,18 @@ export default async function PokemonDetailPage({ params }: PageProps) {
     name: s.stat.name,
     value: s.base_stat,
   }));
+
+  let flavorText = '';
+  try {
+    const species = await fetchPokemonSpecies(pokemon.id);
+    const englishEntries = species.flavor_text_entries.filter(entry => entry.language.name === 'en');
+    if (englishEntries.length > 0) {
+      const lastEntry = englishEntries[englishEntries.length - 1];
+      flavorText = lastEntry.flavor_text.replace(/\f/g, ' ').replace(/\n/g, ' ');
+    }
+  } catch {
+    flavorText = '';
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-900 to-black flex items-center justify-center p-4">
@@ -123,6 +135,15 @@ export default async function PokemonDetailPage({ params }: PageProps) {
                     ))}
                   </div>
                 </div>
+
+                {flavorText && (
+                  <div className="bg-[#1E293B] border-4 border-black p-6">
+                    <h2 className="text-lg font-mono text-white mb-4 uppercase">Description</h2>
+                    <div className="bg-[#1A2B3C] border-2 border-black p-4 font-mono text-sm text-gray-300 leading-relaxed">
+                      {flavorText}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { SearchBar } from '@/components/SearchBar';
-import { PokemonGrid } from '@/components/PokemonGrid';
+import { ViewToggle } from '@/components/ViewToggle';
+import { PokemonViewSwitcher } from '@/components/PokemonViewSwitcher';
 
 export const metadata = {
   title: 'PokéDEX - Classic Pokédex Device',
@@ -20,10 +21,15 @@ export default function Home() {
               </div>
               <h1 className="pokedex-font text-white text-sm">POKéDEX</h1>
             </div>
-            <div className="flex gap-2">
-              <div className="w-3 h-3 rounded-full bg-[#3B82F6] led-glow"></div>
-              <div className="w-3 h-3 rounded-full bg-[#6B2118]"></div>
-              <div className="w-3 h-3 rounded-full bg-[#1B4332]"></div>
+            <div className="flex items-center gap-4">
+              <Suspense>
+                <ViewToggle />
+              </Suspense>
+              <div className="flex gap-2">
+                <div className="w-3 h-3 rounded-full bg-[#3B82F6] led-glow"></div>
+                <div className="w-3 h-3 rounded-full bg-[#6B2118]"></div>
+                <div className="w-3 h-3 rounded-full bg-[#1B4332]"></div>
+              </div>
             </div>
           </div>
           
@@ -35,7 +41,7 @@ export default function Home() {
             </div>
             
             <Suspense fallback={<PokemonGridSkeleton />}>
-              <PokemonGrid />
+              <PokemonViewSwitcher />
             </Suspense>
           </div>
           
