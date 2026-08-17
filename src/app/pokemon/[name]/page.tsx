@@ -40,23 +40,12 @@ export default async function PokemonDetailPage({ params }: { params: Promise<{ 
       <div className="pokedex-frame rounded-3xl p-6 w-full max-w-7xl h-full flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between mb-4 flex-shrink-0">
-          <div className="flex items-center gap-4">
-            <Link href="/">
-              <div className="flex items-center gap-2 bg-[#1E293B] border-4 border-black px-4 py-2 hover:bg-[#233D4D] transition-colors">
-                <ArrowLeft className="w-5 h-5 text-white" />
-                <span className="text-white font-mono">BACK</span>
-              </div>
-            </Link>
-
-            <div>
-              <h1 className="text-3xl pokedex-font text-white uppercase">
-                {pokemon.name}
-              </h1>
-              <p className="text-gray-400 font-mono">#{pokemon.id.toString().padStart(3, '0')}</p>
+          <Link href="/">
+            <div className="flex items-center gap-2 bg-[#1E293B] border-4 border-black px-4 py-2 hover:bg-[#233D4D] transition-colors">
+              <ArrowLeft className="w-5 h-5 text-white" />
+              <span className="text-white font-mono">BACK</span>
             </div>
-          </div>
-
-          <CaughtToggle pokemonId={pokemon.id} initiallyCaught={isCaught} />
+          </Link>
         </div>
 
         {/* LED Indicators */}
@@ -71,6 +60,17 @@ export default async function PokemonDetailPage({ params }: { params: Promise<{ 
           <div className="crt-effect">
             <div className="scroll-screen h-full">
               <div className="px-4 pt-4 pb-4">
+                {/* Pokemon Name + Number + Caught Toggle */}
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h1 className="text-3xl pokedex-font text-white uppercase">
+                      {pokemon.name}
+                    </h1>
+                    <p className="text-gray-400 font-mono">#{pokemon.id.toString().padStart(3, '0')}</p>
+                  </div>
+                  <CaughtToggle pokemonId={pokemon.id} initiallyCaught={isCaught} />
+                </div>
+
                 {/* Pokemon Image */}
                 <div className="flex justify-center mb-6">
                   <PokemonImage pokemonId={pokemon.id} pokemonName={pokemon.name} className="w-48 h-48 object-contain" />

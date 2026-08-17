@@ -32,8 +32,6 @@ export default function PokedexClient({ caughtIds }: PokedexClientProps) {
               POKéDEX
             </h1>
           </div>
-
-          <UserMenu />
         </div>
 
         {/* LED Indicators + View Toggle */}
@@ -50,9 +48,14 @@ export default function PokedexClient({ caughtIds }: PokedexClientProps) {
         <div className="screen-area rounded-xl flex-1 overflow-hidden flex flex-col relative">
           <div className="crt-effect">
             <div className="scroll-screen h-full">
-              {/* Search Bar */}
+              {/* Top bar: search + user menu */}
               <div className="sticky top-0 bg-[#233D4D] pb-2 z-20 px-4 pt-4">
-                <SearchBar />
+                <div className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <SearchBar />
+                  </div>
+                  <UserMenu />
+                </div>
               </div>
 
               {/* Pokemon Content */}
