@@ -151,17 +151,17 @@ export function PokemonGrid({ caughtIds }: PokemonGridProps) {
           const isCaught = caughtIds.includes(pokemon.id);
 
           return (
-            <div key={pokemon.id} ref={isLast ? lastPokemonRef : undefined}>
-              <div className="relative">
+            <div key={pokemon.id} ref={isLast ? lastPokemonRef : undefined} className="relative">
+              <PokemonCard
+                name={pokemon.name}
+                id={pokemon.id}
+                image=""
+                types={types}
+              />
+              <div className="absolute top-2 right-2 z-10" onClick={(e) => e.stopPropagation()}>
                 <CaughtToggle
                   pokemonId={pokemon.id}
                   initiallyCaught={isCaught}
-                />
-                <PokemonCard
-                  name={pokemon.name}
-                  id={pokemon.id}
-                  image=""
-                  types={types}
                 />
               </div>
             </div>
