@@ -8,7 +8,7 @@ export default function PokemonDetailLoading() {
         {/* Header */}
         <div className="flex items-center justify-between mb-4 flex-shrink-0">
           <Link href="/">
-            <div className="flex items-center gap-2 bg-[#1E293B] border-4 border-black px-4 py-2 hover:bg-[#233D4D] transition-colors">
+            <div className="flex items-center gap-2 bg-[#1E293B] border-4 border-black px-4 py-2">
               <ArrowLeft className="w-5 h-5 text-white" />
               <span className="text-white font-mono">BACK</span>
             </div>
