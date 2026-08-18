@@ -48,3 +48,28 @@ export async function fetchPokemonSpecies(id: number): Promise<PokemonSpecies> {
   
   return res.json();
 }
+
+export async function fetchEvolutionChain(url: string): Promise<any> {
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error('Failed to fetch evolution chain');
+  }
+  return res.json();
+}
+
+// Parse evolution chain into a flat list of {name, id, min_level}
+export function parseEvolutionChain(chain: any): { name: string; id: number; min_level?: number }[] {
+  const result: { name: string; id: number; min_level?: number }[] = [];
+
+  function traverse(node: any) {
+    // Get Pokémon ID from the species URL
+    const idMatch = node.species.url.match(/\/(\d+)\//);
+    const id = idMatch ? parseInt(idMatch[1]) : 0;
+    const minLevel = node.evolution_details[0]?.min_level;
+    result.push({ name: node.species.name, id, min_level: minLevel });
+    node.evolves_to.forEach(traverse);
+  }
+
+  traverse(chain.chain);
+  return result;
+}

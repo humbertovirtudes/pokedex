@@ -1,11 +1,12 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Zap } from 'lucide-react';
-import { fetchPokemonDetails, fetchPokemonSpecies } from '@/lib/pokemon';
+import { fetchPokemonDetails, fetchPokemonSpecies, fetchEvolutionChain, parseEvolutionChain } from '@/lib/pokemon';
 import { PokemonImage } from '@/components/PokemonImage';
 import { TypeBadge } from '@/components/TypeBadge';
 import { StatBar } from '@/components/StatBar';
 import { CaughtToggle } from '@/components/CaughtToggle';
+import { EvolutionChain } from '@/components/EvolutionChain';
 import { getCaughtPokemonIds } from '@/lib/supabase/auth';
 import { hasConfig } from '@/lib/supabase/server';
 
@@ -18,14 +19,26 @@ export default async function PokemonDetailPage({ params }: { params: Promise<{ 
     notFound();
   }
 
-  // Fetch species data for flavor text
+  // Fetch species data for flavor text and evolution chain
   let flavorText = '';
   let genus = '';
+  let evolutionChain: { name: string; id: number; min_level?: number }[] = [];
   try {
     const speciesData = await fetchPokemonSpecies(pokemon.id);
     genus = (speciesData as any).genera?.find((g: any) => g.language.name === 'en')?.genus || '';
     const flavorEntry = speciesData.flavor_text_entries?.find((e: any) => e.language.name === 'en');
     flavorText = flavorEntry?.flavor_text?.replace(/\f/g, ' ') || '';
+
+    // Fetch evolution chain
+    const evolutionUrl = (speciesData as any).evolution_chain?.url;
+    if (evolutionUrl) {
+      try {
+        const chainData = await fetchEvolutionChain(evolutionUrl);
+        evolutionChain = parseEvolutionChain(chainData);
+      } catch {
+        // Evolution chain is optional
+      }
+    }
   } catch {
     // Flavor text is optional
   }
@@ -89,6 +102,9 @@ export default async function PokemonDetailPage({ params }: { params: Promise<{ 
                     <p className="text-gray-400 font-mono italic">{genus}</p>
                   </div>
                 )}
+
+                {/* Evolution Chain */}
+                <EvolutionChain chain={evolutionChain} currentId={pokemon.id} />
 
                 {/* Flavor Text */}
                 {flavorText && (
