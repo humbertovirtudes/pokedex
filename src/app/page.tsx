@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import PokedexClient from './PokedexClient';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
-import { getCaughtPokemonIds } from '@/lib/supabase/auth';
+import { getCaughtPokemonIds } from '@/db/actions';
 import { hasConfig } from '@/lib/supabase/server';
 
 export default async function Home() {

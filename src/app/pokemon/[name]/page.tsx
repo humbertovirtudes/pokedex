@@ -7,7 +7,7 @@ import { TypeBadge } from '@/components/TypeBadge';
 import { StatBar } from '@/components/StatBar';
 import { CaughtToggle } from '@/components/CaughtToggle';
 import { EvolutionChain } from '@/components/EvolutionChain';
-import { getCaughtPokemonIds } from '@/lib/supabase/auth';
+import { getCaughtPokemonIds } from '@/db/actions';
 import { hasConfig } from '@/lib/supabase/server';
 
 export default async function PokemonDetailPage({ params }: { params: Promise<{ name: string }> }) {
