@@ -1,13 +1,13 @@
 'use client';
 
 import Image from 'next/image';
-import { ArrowRight, Flame } from 'lucide-react';
+import { ArrowRight, Flame, Gem, Link2, Heart, Sun, Moon, CloudRain, MapPin, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
 interface EvolutionStep {
   name: string;
   id: number;
-  min_level?: number;
+  condition?: string;
 }
 
 interface EvolutionChainProps {
@@ -15,18 +15,39 @@ interface EvolutionChainProps {
   currentId: number;
 }
 
+function getConditionIcon(condition: string) {
+  const lower = condition.toLowerCase();
+  if (lower.startsWith('lv.')) return <Flame className="w-3 h-3" />;
+  if (lower.includes('trade')) return <Link2 className="w-3 h-3" />;
+  if (lower.includes('use ') || lower.includes('stone')) return <Gem className="w-3 h-3" />;
+  if (lower.includes('friendship') || lower.includes('affection')) return <Heart className="w-3 h-3" />;
+  if (lower.includes('night')) return <Moon className="w-3 h-3" />;
+  if (lower.includes('day')) return <Sun className="w-3 h-3" />;
+  if (lower.includes('rain')) return <CloudRain className="w-3 h-3" />;
+  if (lower.includes('at ') || lower.includes('level at')) return <MapPin className="w-3 h-3" />;
+  return <Sparkles className="w-3 h-3" />;
+}
+
+function getConditionColor(condition: string) {
+  const lower = condition.toLowerCase();
+  if (lower.startsWith('lv.')) return 'text-orange-400';
+  if (lower.includes('trade')) return 'text-purple-400';
+  if (lower.includes('stone') || lower.includes('use ')) return 'text-pink-400';
+  if (lower.includes('friendship') || lower.includes('affection')) return 'text-red-400';
+  return 'text-yellow-400';
+}
+
 export function EvolutionChain({ chain, currentId }: EvolutionChainProps) {
   if (!chain || chain.length === 0) {
     return null;
   }
 
-  // Only show if there's more than one stage
   if (chain.length === 1) {
     return null;
   }
 
   return (
-    <div className="bg-[#1A2B3C] border-4 border-black p-4">
+    <div className="bg-[#1A2B3C] border-4 border-black p-4 mb-6">
       <h2 className="text-xl pokedex-font text-white mb-4">EVOLUTION LINE</h2>
       <div className="flex items-center gap-2 flex-wrap">
         {chain.map((step, index) => {
@@ -60,10 +81,16 @@ export function EvolutionChain({ chain, currentId }: EvolutionChainProps) {
                   `}>
                     {step.name}
                   </span>
-                  {step.min_level && index > 0 && (
+                  {index === 0 && (
                     <div className="flex items-center gap-1 text-xs text-orange-400">
                       <Flame className="w-3 h-3" />
-                      Lv.{step.min_level}
+                      Lv.1
+                    </div>
+                  )}
+                  {step.condition && index > 0 && (
+                    <div className={`flex items-center gap-1 text-xs ${getConditionColor(step.condition)}`}>
+                      {getConditionIcon(step.condition)}
+                      {step.condition}
                     </div>
                   )}
                 </div>

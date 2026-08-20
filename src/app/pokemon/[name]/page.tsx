@@ -22,7 +22,7 @@ export default async function PokemonDetailPage({ params }: { params: Promise<{ 
   // Fetch species data for flavor text and evolution chain
   let flavorText = '';
   let genus = '';
-  let evolutionChain: { name: string; id: number; min_level?: number }[] = [];
+  let evolutionChain: { name: string; id: number; condition?: string }[] = [];
   try {
     const speciesData = await fetchPokemonSpecies(pokemon.id);
     genus = (speciesData as any).genera?.find((g: any) => g.language.name === 'en')?.genus || '';
