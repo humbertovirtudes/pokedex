@@ -105,7 +105,7 @@ export function parseEvolutionChain(chain: any): EvolutionStep[] {
   const result: EvolutionStep[] = [];
 
   function traverse(node: any) {
-    const idMatch = node.species.url.match(/\s*(\d+)\s*\//);
+    const idMatch = node.species.url.match(/\/(\d+)\//);
     const id = idMatch ? parseInt(idMatch[1]) : 0;
     const condition = parseEvolutionCondition(node.evolution_details);
     result.push({ name: node.species.name, id, condition });
